@@ -1,14 +1,20 @@
-- name: Test Cisco Switch Connectivity
+
+- name: Configure Cisco Local Admin
   hosts: cisco_switch
   gather_facts: false
 
   tasks:
-    - name: Execute show version
+    - name: Configure admin username
+      cisco.ios.ios_config:
+        lines:
+          - username admin privilege 15 secret 123456
+
+    - name: Verify admin configuration
       cisco.ios.ios_command:
         commands:
-          - show version
+          - show running-config | include username admin
       register: result
 
-    - name: Display Cisco version
+    - name: Display admin configuration
       ansible.builtin.debug:
         var: result.stdout_lines
