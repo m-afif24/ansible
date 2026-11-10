@@ -1,22 +1,33 @@
 
-- name: Configure SNMP Cisco Switch
+- name: Create 10 VLANs on Cisco Switch
   hosts: cisco_switch
   gather_facts: false
 
-  tasks:
-    - name: Configure SNMP
-      cisco.ios.ios_config:
-        lines:
-          - snmp-server community MONITORING RO
-          - snmp-server location DC-ROOM
-          - snmp-server contact Network-Administrator
+  vars:
+    vlan_list:
+      - { vlan_id: 10, name: VLAN_10 }
+      - { vlan_id: 20, name: VLAN_20 }
+      - { vlan_id: 30, name: VLAN_30 }
+      - { vlan_id: 40, name: VLAN_40 }
+      - { vlan_id: 50, name: VLAN_50 }
+      - { vlan_id: 60, name: VLAN_60 }
+      - { vlan_id: 70, name: VLAN_70 }
+      - { vlan_id: 80, name: VLAN_80 }
+      - { vlan_id: 90, name: VLAN_90 }
+      - { vlan_id: 100, name: VLAN_100 }
 
-    - name: Verify SNMP configuration
+  tasks:
+    - name: Create VLANs
+      cisco.ios.ios_vlans:
+        config: "{{ vlan_list }}"
+        state: merged
+
+    - name: Verify VLAN configuration
       cisco.ios.ios_command:
         commands:
-          - show running-config | include snmp-server
-      register: snmp_result
+          - show vlan brief
+      register: vlan_result
 
-    - name: Display SNMP configuration
+    - name: Display VLAN result
       ansible.builtin.debug:
-        var: snmp_result.stdout_lines
+        var: vlan_result.stdout_lines
