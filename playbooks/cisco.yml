@@ -1,0 +1,14 @@
+- name: Test Cisco Switch Connectivity
+  hosts: cisco_switch
+  gather_facts: false
+
+  tasks:
+    - name: Execute show version
+      cisco.ios.ios_command:
+        commands:
+          - show version
+      register: result
+
+    - name: Display Cisco version
+      ansible.builtin.debug:
+        var: result.stdout_lines
