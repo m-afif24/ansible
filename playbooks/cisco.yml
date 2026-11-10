@@ -1,20 +1,22 @@
 
-- name: Configure Cisco Local Admin
+- name: Configure SNMP Cisco Switch
   hosts: cisco_switch
   gather_facts: false
 
   tasks:
-    - name: Configure admin username
+    - name: Configure SNMP
       cisco.ios.ios_config:
         lines:
-          - username admin privilege 15 secret 123456
+          - snmp-server community MONITORING RO
+          - snmp-server location DC-ROOM
+          - snmp-server contact Network-Administrator
 
-    - name: Verify admin configuration
+    - name: Verify SNMP configuration
       cisco.ios.ios_command:
         commands:
-          - show running-config | include username admin
-      register: result
+          - show running-config | include snmp-server
+      register: snmp_result
 
-    - name: Display admin configuration
+    - name: Display SNMP configuration
       ansible.builtin.debug:
-        var: result.stdout_lines
+        var: snmp_result.stdout_lines
